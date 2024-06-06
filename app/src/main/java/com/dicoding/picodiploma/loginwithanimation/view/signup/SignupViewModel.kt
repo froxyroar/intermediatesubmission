@@ -1,4 +1,3 @@
-// view/signup/SignupViewModel.kt
 package com.dicoding.picodiploma.loginwithanimation.view.signup
 
 import androidx.lifecycle.LiveData
@@ -17,10 +16,9 @@ class SignupViewModel(private val userRepository: UserRepository) : ViewModel() 
         viewModelScope.launch {
             try {
                 val response = userRepository.register(name, email, password)
-                _registerResult.value = response
+                _registerResult.postValue(response)
             } catch (e: Exception) {
-                // Handle error
-                _registerResult.value = RegisterResponse(error = true, message = e.message ?: "Unknown error")
+                _registerResult.postValue(RegisterResponse(error = true, message = e.message ?: "Unknown error"))
             }
         }
     }

@@ -3,6 +3,7 @@ package com.dicoding.picodiploma.loginwithanimation.view.signup
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -14,6 +15,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.dicoding.picodiploma.loginwithanimation.databinding.ActivitySignupBinding
 import com.dicoding.picodiploma.loginwithanimation.view.ViewModelFactory
+import com.dicoding.picodiploma.loginwithanimation.view.welcome.WelcomeActivity
 
 class SignupActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySignupBinding
@@ -50,10 +52,15 @@ class SignupActivity : AppCompatActivity() {
         signupViewModel.registerResult.observe(this, Observer { response ->
             if (!response.error!!) {
                 Toast.makeText(this, "Registration successful", Toast.LENGTH_SHORT).show()
+                // Alirkan ke WelcomeActivity setelah pendaftaran berhasil
+                val intent = Intent(this, WelcomeActivity::class.java)
+                startActivity(intent)
+                finish() // Optional, untuk menutup SignupActivity agar tidak dapat diakses kembali dengan menekan tombol back
             } else {
                 Toast.makeText(this, "Registration failed: ${response.message}", Toast.LENGTH_SHORT).show()
             }
         })
+
     }
 
     private fun setupAction() {
@@ -61,7 +68,9 @@ class SignupActivity : AppCompatActivity() {
             val name = binding.nameEditText.text.toString()
             val email = binding.emailEditText.text.toString()
             val password = binding.passwordEditText.text.toString()
+            binding.loadingProgressBar.visibility = View.VISIBLE
             signupViewModel.register(name, email, password)
+            binding.loadingProgressBar.visibility = View.GONE
         }
     }
 

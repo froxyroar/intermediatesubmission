@@ -1,4 +1,3 @@
-// data/UserRepository.kt
 package com.dicoding.picodiploma.loginwithanimation.data
 
 import com.dicoding.picodiploma.loginwithanimation.data.pref.LoginResponse
@@ -13,7 +12,6 @@ class UserRepository private constructor(
     private val apiService: ApiService
 ) {
 
-    // Existing methods for user session management
     suspend fun saveSession(user: UserModel) {
         userPreference.saveSession(user)
     }
@@ -26,7 +24,6 @@ class UserRepository private constructor(
         userPreference.logout()
     }
 
-    // New methods for registration and login
     suspend fun register(name: String, email: String, password: String): RegisterResponse {
         return apiService.register(name, email, password)
     }

@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.dicoding.picodiploma.loginwithanimation"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.dicoding.picodiploma.loginwithanimation"
@@ -43,7 +43,10 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation("androidx.activity:activity:1.8.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

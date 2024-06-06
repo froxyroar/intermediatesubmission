@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "session")
@@ -32,6 +33,11 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
         }
     }
 
+    suspend fun getToken(): String? {
+        val preferences = dataStore.data.first()
+        return preferences[TOKEN_KEY]
+    }
+
     suspend fun logout() {
         dataStore.edit { preferences ->
             preferences.clear()
@@ -46,12 +52,17 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
         private val TOKEN_KEY = stringPreferencesKey("token")
         private val IS_LOGIN_KEY = booleanPreferencesKey("isLogin")
 
-        fun getInstance(context: Context): UserPreference {
+        fun getInstance(dataStore: DataStore<Preferences>): UserPreference {
             return INSTANCE ?: synchronized(this) {
-                val instance = UserPreference(context.dataStore)
+                val instance = UserPreference(dataStore)
                 INSTANCE = instance
                 instance
             }
+        }
+
+        // Helper function to create an instance using context
+        fun getInstance(context: Context): UserPreference {
+            return getInstance(context.dataStore)
         }
     }
 }

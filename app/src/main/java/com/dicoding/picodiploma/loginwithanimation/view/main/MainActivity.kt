@@ -1,40 +1,79 @@
 package com.dicoding.picodiploma.loginwithanimation.view.main
 
-import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.view.View
+import android.util.Log
+import android.view.MenuItem
 import android.view.WindowInsets
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.dicoding.picodiploma.loginwithanimation.R
 import com.dicoding.picodiploma.loginwithanimation.databinding.ActivityMainBinding
 import com.dicoding.picodiploma.loginwithanimation.view.ViewModelFactory
+import com.dicoding.picodiploma.loginwithanimation.view.addstory.AddStoryActivity
 import com.dicoding.picodiploma.loginwithanimation.view.welcome.WelcomeActivity
+import com.dicoding.picodiploma.loginwithanimation.data.Result
+import com.google.android.material.appbar.MaterialToolbar
 
 class MainActivity : AppCompatActivity() {
     private val viewModel by viewModels<MainViewModel> {
         ViewModelFactory.getInstance(this)
     }
     private lateinit var binding: ActivityMainBinding
+    private lateinit var storyAdapter: StoryAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        storyAdapter = StoryAdapter(emptyList())
+        binding.rvStories.adapter = storyAdapter
+
+        val toolbar = findViewById<MaterialToolbar>(R.id.topAppBar)
+        toolbar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.action_add_story -> {
+                    startActivity(Intent(this, AddStoryActivity::class.java))
+                    true
+                }
+                R.id.action_logout -> {
+                    viewModel.logout()
+                    startActivity(Intent(this, WelcomeActivity::class.java))
+                    finish()
+                    true
+                }
+                else -> false
+            }
+        }
+
         viewModel.getSession().observe(this) { user ->
             if (!user.isLogin) {
                 startActivity(Intent(this, WelcomeActivity::class.java))
                 finish()
+            } else {
+                viewModel.getStories().observe(this) { result ->
+                    when (result) {
+                        is Result.Loading -> {
+                            // Show loading indicator
+                        }
+                        is Result.Success -> {
+                            val stories = result.data.listStory
+                            storyAdapter.submitList(stories)
+                        }
+                        is Result.Error -> {
+                            Log.e("MainActivity", result.message)
+                            Toast.makeText(this, result.message, Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
             }
         }
 
         setupView()
-        setupAction()
-        playAnimation()
     }
 
     private fun setupView() {
@@ -48,28 +87,5 @@ class MainActivity : AppCompatActivity() {
             )
         }
         supportActionBar?.hide()
-    }
-
-    private fun setupAction() {
-        binding.logoutButton.setOnClickListener {
-            viewModel.logout()
-        }
-    }
-
-    private fun playAnimation() {
-        ObjectAnimator.ofFloat(binding.imageView, View.TRANSLATION_X, -30f, 30f).apply {
-            duration = 6000
-            repeatCount = ObjectAnimator.INFINITE
-            repeatMode = ObjectAnimator.REVERSE
-        }.start()
-
-        val name = ObjectAnimator.ofFloat(binding.nameTextView, View.ALPHA, 1f).setDuration(100)
-        val message = ObjectAnimator.ofFloat(binding.messageTextView, View.ALPHA, 1f).setDuration(100)
-        val logout = ObjectAnimator.ofFloat(binding.logoutButton, View.ALPHA, 1f).setDuration(100)
-
-        AnimatorSet().apply {
-            playSequentially(name, message, logout)
-            startDelay = 100
-        }.start()
     }
 }

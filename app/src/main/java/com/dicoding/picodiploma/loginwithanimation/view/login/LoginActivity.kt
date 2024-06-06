@@ -11,6 +11,7 @@ import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import com.dicoding.picodiploma.loginwithanimation.data.pref.UserModel
 import com.dicoding.picodiploma.loginwithanimation.databinding.ActivityLoginBinding
 import com.dicoding.picodiploma.loginwithanimation.view.ViewModelFactory
@@ -48,20 +49,27 @@ class LoginActivity : AppCompatActivity() {
     private fun setupAction() {
         binding.loginButton.setOnClickListener {
             val email = binding.emailEditText.text.toString()
-            viewModel.saveSession(UserModel(email, "sample_token"))
-            AlertDialog.Builder(this).apply {
-                setTitle("Yeah!")
-                setMessage("Anda berhasil login. Sudah tidak sabar untuk belajar ya?")
-                setPositiveButton("Lanjut") { _, _ ->
-                    val intent = Intent(context, MainActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                    startActivity(intent)
-                    finish()
-                }
-                create()
-                show()
-            }
+            val password = binding.passwordEditText.text.toString()
+            viewModel.login(email, password)
         }
+
+        viewModel.loginResult.observe(this, Observer { success ->
+            if (success) {
+                // Login successful
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+            } else {
+                // Login failed, show error message
+                AlertDialog.Builder(this).apply {
+                    setTitle("Error")
+                    setMessage("Login failed. Please check your credentials.")
+                    setPositiveButton("OK", null)
+                    create()
+                    show()
+                }
+            }
+        })
     }
 
     private fun playAnimation() {
