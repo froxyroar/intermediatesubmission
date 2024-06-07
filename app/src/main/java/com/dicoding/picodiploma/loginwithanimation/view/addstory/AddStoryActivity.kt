@@ -3,9 +3,12 @@ package com.dicoding.picodiploma.loginwithanimation.view.addstory
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -19,7 +22,14 @@ import com.dicoding.picodiploma.loginwithanimation.databinding.ActivityAddStoryB
 import com.dicoding.picodiploma.loginwithanimation.view.ViewModelFactory
 import com.dicoding.picodiploma.loginwithanimation.view.main.MainActivity
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
+import java.io.OutputStream
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class AddStoryActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddStoryBinding
@@ -62,6 +72,7 @@ class AddStoryActivity : AppCompatActivity() {
 
         viewModel.uploadResult.observe(this) { result ->
             if (result != null) {
+                binding.loadingProgressBar.visibility = View.GONE
                 if (result.error == true) {
                     Toast.makeText(this, "Upload failed: ${result.message}", Toast.LENGTH_SHORT).show()
                 } else {
@@ -92,17 +103,16 @@ class AddStoryActivity : AppCompatActivity() {
 
     private fun uploadStory() {
         val description = binding.edAddDescription.text.toString()
-        val token = intent.getStringExtra("EXTRA_TOKEN") ?: ""
-
         if (description.isNotEmpty() && selectedImageUri != null) {
+            binding.loadingProgressBar.visibility = View.VISIBLE
             val file = if (selectedImageUri!!.toString().startsWith("content")) {
                 getFileFromUri(selectedImageUri!!)
             } else {
-                photoFile
+                photoFile?.reduceFileImage()
             }
             if (file != null) {
                 lifecycleScope.launch {
-                    viewModel.uploadStory("Bearer $token", file, description)
+                    viewModel.uploadStory(file, description)
                 }
             }
         } else {
@@ -110,10 +120,41 @@ class AddStoryActivity : AppCompatActivity() {
         }
     }
 
+    private fun getFileFromUri(uri: Uri): File {
+        val contentResolver = contentResolver
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+        val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        val myFile = File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
 
-    private fun getFileFromUri(uri: Uri): File? {
-        // Implement this function to convert Uri to File
-        return null
+        val inputStream = contentResolver.openInputStream(uri) as InputStream
+        val outputStream: OutputStream = FileOutputStream(myFile)
+        val buf = ByteArray(1024)
+        var len: Int
+        while (inputStream.read(buf).also { len = it } > 0) outputStream.write(buf, 0, len)
+        outputStream.close()
+        inputStream.close()
+
+        return myFile.reduceFileImage()
+    }
+
+    private fun File.reduceFileImage(): File {
+        var compressQuality = 100
+        var streamLength: Int
+        val bmpStream = ByteArrayOutputStream()
+        do {
+            bmpStream.use { bmpStream.reset() }
+            BitmapFactory.decodeFile(this.path).compress(Bitmap.CompressFormat.JPEG, compressQuality, bmpStream)
+            val bmpPicByteArray = bmpStream.toByteArray()
+            streamLength = bmpPicByteArray.size
+            compressQuality -= 5
+        } while (streamLength > 1000000)
+        val bmpPicByteArray = bmpStream.toByteArray()
+        FileOutputStream(this).apply {
+            write(bmpPicByteArray)
+            flush()
+            close()
+        }
+        return this
     }
 
     private fun checkAndOpenCamera() {

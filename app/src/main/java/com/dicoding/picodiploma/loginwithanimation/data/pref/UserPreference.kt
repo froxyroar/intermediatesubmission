@@ -52,17 +52,12 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
         private val TOKEN_KEY = stringPreferencesKey("token")
         private val IS_LOGIN_KEY = booleanPreferencesKey("isLogin")
 
-        fun getInstance(dataStore: DataStore<Preferences>): UserPreference {
+        fun getInstance(context: Context): UserPreference {
             return INSTANCE ?: synchronized(this) {
-                val instance = UserPreference(dataStore)
+                val instance = UserPreference(context.dataStore)
                 INSTANCE = instance
                 instance
             }
-        }
-
-        // Helper function to create an instance using context
-        fun getInstance(context: Context): UserPreference {
-            return getInstance(context.dataStore)
         }
     }
 }

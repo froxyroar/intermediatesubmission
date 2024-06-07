@@ -1,6 +1,7 @@
 package com.dicoding.picodiploma.loginwithanimation.view.detail
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.dicoding.picodiploma.loginwithanimation.data.pref.ListStoryItem
@@ -19,10 +20,12 @@ class DetailActivity : AppCompatActivity() {
         val storyJson = intent.getStringExtra("STORY")
         val story = Gson().fromJson(storyJson, ListStoryItem::class.java)
 
+        binding.loadingProgressBar.visibility = View.VISIBLE
         story?.let {
             binding.tvDetailName.text = it.name
             binding.tvDetailDescription.text = it.description
             Glide.with(this).load(it.photoUrl).into(binding.ivDetailPhoto)
         }
+        binding.loadingProgressBar.visibility = View.GONE
     }
 }

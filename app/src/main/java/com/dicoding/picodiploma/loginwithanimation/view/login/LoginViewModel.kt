@@ -17,21 +17,15 @@ class LoginViewModel(private val repository: UserRepository) : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = repository.login(email, password)
-                // Check if response is not null and does not contain errors
                 if (response != null && response.error == false && response.loginResult != null) {
-                    // Login successful
                     _loginResult.postValue(true)
-                    // Save session if needed
                     response.loginResult.token?.let { token ->
                         repository.saveSession(UserModel(email, token))
                     }
                 } else {
-                    // Login failed, handle the error
                     _loginResult.postValue(false)
-                    // You can use response.message to display the error message
                 }
             } catch (e: Exception) {
-                // Handle error
                 _loginResult.postValue(false)
             }
         }

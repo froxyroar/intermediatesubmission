@@ -6,9 +6,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.dicoding.picodiploma.loginwithanimation.data.Result
 import com.dicoding.picodiploma.loginwithanimation.data.StoryRepository
 import com.dicoding.picodiploma.loginwithanimation.data.UserRepository
+import com.dicoding.picodiploma.loginwithanimation.data.pref.ListStoryItem
 import com.dicoding.picodiploma.loginwithanimation.data.pref.UserModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -45,5 +48,9 @@ class MainViewModel(
             Log.e("MainViewModel", "Unknown error: ${e.message}", e)
             emit(Result.Error("Unknown error: ${e.message}"))
         }
+    }
+
+    fun getPagingStories(token: String): LiveData<PagingData<ListStoryItem>> {
+        return storyRepository.getPagingStories(token).cachedIn(viewModelScope)
     }
 }

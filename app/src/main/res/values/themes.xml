@@ -1,9 +1,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.LoginWithAnimation" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    <style name="Base.Theme.LoginWithAnimation" parent="Theme.Material3.DayNight">
     </style>
-
+    <style name="CustomToolbarTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
+        <item name="actionMenuTextColor">@color/white</item>
+        <item name="android:textColorPrimary">@color/teal</item>
+        <item name="colorControlNormal">@color/teal</item>
+    </style>
     <style name="Theme.LoginWithAnimation" parent="Base.Theme.LoginWithAnimation" />
 </resources>

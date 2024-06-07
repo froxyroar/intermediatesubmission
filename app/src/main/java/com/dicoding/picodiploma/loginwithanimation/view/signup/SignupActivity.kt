@@ -1,4 +1,3 @@
-// view/signup/SignupActivity.kt
 package com.dicoding.picodiploma.loginwithanimation.view.signup
 
 import android.animation.AnimatorSet
@@ -51,12 +50,13 @@ class SignupActivity : AppCompatActivity() {
 
         signupViewModel.registerResult.observe(this, Observer { response ->
             if (!response.error!!) {
+                binding.loadingProgressBar.visibility = View.GONE
                 Toast.makeText(this, "Registration successful", Toast.LENGTH_SHORT).show()
-                // Alirkan ke WelcomeActivity setelah pendaftaran berhasil
                 val intent = Intent(this, WelcomeActivity::class.java)
                 startActivity(intent)
-                finish() // Optional, untuk menutup SignupActivity agar tidak dapat diakses kembali dengan menekan tombol back
+                finish()
             } else {
+                binding.loadingProgressBar.visibility = View.GONE
                 Toast.makeText(this, "Registration failed: ${response.message}", Toast.LENGTH_SHORT).show()
             }
         })
@@ -70,7 +70,6 @@ class SignupActivity : AppCompatActivity() {
             val password = binding.passwordEditText.text.toString()
             binding.loadingProgressBar.visibility = View.VISIBLE
             signupViewModel.register(name, email, password)
-            binding.loadingProgressBar.visibility = View.GONE
         }
     }
 

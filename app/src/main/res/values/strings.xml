@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">LoginWithAnimation</string>
+    <string name="app_name">StoryApp</string>
     <string name="signup">Daftar</string>
     <string name="login">Masuk</string>
     <string name="message_welcome_page">Ayo mulai upload story mu kapanpun dan dimanapun!Silahkan login atau daftar bila belum punya akun.</string>
@@ -18,4 +18,14 @@
     <string name="gallery">Gallery</string>
     <string name="description">Description</string>
     <string name="upload">Upload</string>
+    <string name="welcome_image">WelcomeImage</string>
+    <string name="story_description">Story Description</string>
+    <string name="user_uploader">User Uploader</string>
+    <string name="login_image">LoginImage</string>
+    <string name="signup_image">SignupImage</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="normal_type">Normal</string>
+    <string name="satellite_type">Satellite</string>
+    <string name="terrain_type">Terrain</string>
+    <string name="hybrid_type">Hybrid</string>
 </resources>

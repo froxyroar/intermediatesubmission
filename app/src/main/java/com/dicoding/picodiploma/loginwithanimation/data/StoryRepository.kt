@@ -1,9 +1,13 @@
 package com.dicoding.picodiploma.loginwithanimation.data
 
 import android.util.Log
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.liveData
 import com.dicoding.picodiploma.loginwithanimation.data.pref.StoryResponse
 import com.dicoding.picodiploma.loginwithanimation.data.pref.UserPreference
 import com.dicoding.picodiploma.loginwithanimation.data.retrofit.ApiService
+import com.dicoding.picodiploma.loginwithanimation.view.main.paging.StoryPagingSource
 import retrofit2.HttpException
 
 class StoryRepository private constructor(
@@ -32,6 +36,22 @@ class StoryRepository private constructor(
             throw Exception("Token is null")
         }
     }
+
+    suspend fun getStoriesWithLocation(token: String): StoryResponse {
+        return apiService.getStoriesWithLocation(token)
+    }
+
+    suspend fun getToken(): String? {
+        return userPreference.getToken()
+    }
+
+    fun getPagingStories(token: String) = Pager(
+        config = PagingConfig(
+            pageSize = 20,
+            enablePlaceholders = false
+        ),
+        pagingSourceFactory = { StoryPagingSource(apiService, token) }
+    ).liveData
 
     companion object {
         @Volatile

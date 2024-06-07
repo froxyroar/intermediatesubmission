@@ -41,11 +41,15 @@ class WelcomeActivity : AppCompatActivity() {
 
     private fun setupAction() {
         binding.loginButton.setOnClickListener {
+            binding.loadingProgressBar.visibility = View.VISIBLE
             startActivity(Intent(this, LoginActivity::class.java))
+            binding.loadingProgressBar.visibility = View.GONE
         }
 
         binding.signupButton.setOnClickListener {
+            binding.loadingProgressBar.visibility = View.VISIBLE
             startActivity(Intent(this, SignupActivity::class.java))
+            binding.loadingProgressBar.visibility = View.GONE
         }
     }
 

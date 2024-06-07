@@ -16,7 +16,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/iv_detail_photo"
-        android:text="User Uploader"
+        android:text="@string/user_uploader"
         android:textSize="24sp"
         android:textStyle="bold"
         android:layout_marginTop="16dp"/>
@@ -26,8 +26,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_detail_name"
-        android:text="Story Description"
+        android:text="@string/story_description"
         android:textSize="16sp"
         android:layout_marginTop="8dp"/>
+
+    <ProgressBar
+        android:id="@+id/loadingProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
 
 </RelativeLayout>
