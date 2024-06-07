@@ -38,8 +38,17 @@ class StoryRepository private constructor(
     }
 
     suspend fun getStoriesWithLocation(token: String): StoryResponse {
-        return apiService.getStoriesWithLocation(token)
+        return try {
+            apiService.getStoriesWithLocation(token)
+        } catch (e: HttpException) {
+            Log.e("StoryRepository", "HTTP error: ${e.code()} ${e.message()}", e)
+            throw e
+        } catch (e: Exception) {
+            Log.e("StoryRepository", "Error fetching stories with location", e)
+            throw e
+        }
     }
+
 
     suspend fun getToken(): String? {
         return userPreference.getToken()
